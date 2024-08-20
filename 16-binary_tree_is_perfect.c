@@ -1,60 +1,41 @@
-#include <stddef.h>
 #include "binary_trees.h"
-#include "11-binary_tree_size.c"
 
 /**
- * binary_tree_height - Measures the height of a binary tree
- * @tree: A pointer to the root node
- * Return: The height of the tree or -1 if NULL
+ * compare_depth - compare size
+ *
+ * @tree: pointer to the root
+ * Return: size
  */
-
-size_t binary_tree_height(const binary_tree_t *tree)
+int compare_depth(const binary_tree_t *tree)
 {
-	size_t left_height, right_height;
-
-	if (tree == NULL)
+	if (!tree)
 		return (0);
-	left_height = binary_tree_height(tree->left);
-	right_height = binary_tree_height(tree->right);
-	return ((left_height >
-				right_height ? left_height : right_height) + 1);
+	else
+		return (compare_depth(tree->left) + 1 + compare_depth(tree->right));
 }
 
 /**
- * binary_tree_is_full - Checks if a binary tree is full.
- * @tree: A pointer to the root node
- * Return: 1 if the tree is full, 0 if it's not or NULL.
- */
-
-int binary_tree_is_full(const binary_tree_t *tree)
-{
-	if (tree == NULL)
-		return (0);
-	if (tree->left == NULL && tree->right == NULL)
-		return (1);
-	if (tree->left != NULL && tree->right != NULL)
-		return (binary_tree_is_full(
-					tree->left) && binary_tree_is_full(
-						tree->right));
-	return (0);
-}
-
-/**
- * binary_tree_is_perfect - Checks if a binary tree is perfect
- * @tree: A pointer to the root node
- * Return: 1 if the tree is perfect, 0 if it's not or if NULL
+ * binary_tree_is_perfect - function that checks if a binary tree is perfect
+ *
+ * @tree: pointer to the root node of the tree to check
+ * Return: 0
  */
 
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	size_t height;
+	int h_left = 0, h_right = 0;
 
-	if (tree == NULL)
+	if (!tree)
 		return (0);
-	height = binary_tree_height(tree);
-	if (binary_tree_is_full(tree) && (
-				(size_t)1 << height) - 1 == binary_tree_size(
-					tree))
+
+	if (tree && (!tree->left && !tree->right))
 		return (1);
+
+	h_left = compare_depth(tree->left);
+	h_right = compare_depth(tree->right);
+
+	if ((h_left - h_right) == 0)
+		return (1);
+
 	return (0);
 }

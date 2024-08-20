@@ -1,34 +1,64 @@
-#include <stddef.h>
 #include "binary_trees.h"
 
 /**
- * binary_tree_is_complete - Checks if a binary tree is complete.
- * @tree: A pointer to the root node
- * Return: 1 if complete, 0 if it's not or NULL
+ * count_nodes - Counts ths inside a tree
+ * @root:  node
+ *
+ * Return: Number odes
  */
 
-int binary_tree_is_complete(const binary_tree_t *tree)
+int count_nodes(binary_tree_t *root)
 {
-	int gap_found = 0;
-	binary_tree_t *queue[10000], *current;
-	int front = 0, rear = 0;
-
-	if (tree == NULL)
+	if (!root)
 		return (0);
 
-	queue[rear++] = (binary_tree_t *)tree;
-	while (front < rear)
-	{
-		current = queue[front++];
-		if (current == NULL)
-			gap_found = 1;
-		if (gap_found && current != NULL)
-			return (0);
-		if (current != NULL)
-		{
-			queue[rear++] = current->left;
-			queue[rear++] = current->right;
-		}
-	}
-	return (1);
+	return (1 + count_nodes(root->left) + count_nodes(root->right));
+}
+
+
+/**
+ * is_complete - Checks if a tree is complete
+ * @root: Pointer to tree's root
+ * @index: Index of the node been evaluated
+ * @n: number of trees nod
+ *
+ * Return: 1 if the tree is a heap, 0 otherwise
+ */
+
+int is_complete(binary_tree_t *root, int index, int n)
+{
+	if (!root)
+		return (0);
+
+	if (index >= n)
+		return (0);
+	if (!root->left && !root->right)
+		return (1);
+	if (root->right && !root->left)
+		return (0);
+	if (root->left && !root->right)
+		return (is_complete(root->left, index * 2 + 1, n));
+
+	return (is_complete(root->left, index * 2 + 1, n) &&
+		is_complete(root->right, index * 2 + 2, n));
+}
+
+/**
+ * binary_tree_is_complete - check for bt complete
+ * @tree: Pointer to root
+ *
+ * Return: 1 if
+ */
+int binary_tree_is_complete(const binary_tree_t *tree)
+{
+	int nod;
+	binary_tree_t *root;
+
+	if (!tree)
+		return (0);
+
+	root = (binary_tree_t *)tree;
+	nod = count_nodes(root);
+
+	return (is_complete(root, 0, nod));
 }
